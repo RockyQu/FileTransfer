@@ -9,7 +9,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/App" />
-            <option value="$PROJECT_DIR$/FTP" />
+            <option value="$PROJECT_DIR$/Transfer" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

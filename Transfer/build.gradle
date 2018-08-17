@@ -11,7 +11,7 @@ publish {
     groupId = 'me.tool'// 包名
     artifactId = 'FileTransfer'// 项目名
     publishVersion = verName// 版本号
-    desc = 'Android'
+    desc = '基于 Apache FTPClient 的轻量封装，帮助你轻松实现上传、下载任何类型的文件'
     website = 'https://github.com/RockyQu/FileTransfer'
 }
 // End 以上这段功能是用来上传至代码库
