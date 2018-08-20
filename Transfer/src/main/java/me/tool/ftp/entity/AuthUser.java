@@ -1,4 +1,4 @@
-package me.tool.ftp.user;
+package me.tool.ftp.entity;
 
 /**
  * 授权用户

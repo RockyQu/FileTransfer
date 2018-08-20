@@ -2,9 +2,7 @@ package me.tool.ftp;
 
 import android.app.Application;
 
-import org.apache.commons.net.ftp.FTPClient;
-
-import me.tool.ftp.user.AuthUser;
+import me.tool.ftp.entity.AuthUser;
 
 /**
  * 一些配置参数，具体请查看 {@link TransferConfig}

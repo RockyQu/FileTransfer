@@ -5,7 +5,8 @@ import android.os.Bundle;
 
 import me.tool.ftp.Transfer;
 import me.tool.ftp.TransferConfig;
-import me.tool.ftp.user.AuthUser;
+import me.tool.ftp.UploadListener;
+import me.tool.ftp.entity.AuthUser;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -14,13 +15,22 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        TransferConfig config = TransferConfig.getInstance()
+        TransferConfig.getInstance()
                 .setApplication(getApplication())
+                // 设置IP 地址
                 .setHost("192.168.1.22")
+                // 端口
                 .setPort(21)
+                // 登录用户
                 .setAuthUser(new AuthUser("", ""));
 
-        Transfer.getInstance().uploadFile("", "");
+        Transfer.getInstance().uploadFile("", new UploadListener() {
+
+            @Override
+            public void uploaded(boolean result) {
+
+            }
+        });
 
 
     }
