@@ -37,7 +37,7 @@ public class TransferConfig {
         private static TransferConfig config = new TransferConfig();
     }
 
-    public static TransferConfig get() {
+    public static TransferConfig getInstance() {
         return Singleton.config;
     }
 
@@ -49,31 +49,35 @@ public class TransferConfig {
         return application;
     }
 
-    public void setApplication(Application application) {
+    public TransferConfig setApplication(Application application) {
         this.application = application;
+        return this;
     }
 
     public String getHost() {
         return host;
     }
 
-    public void setHost(String host) {
+    public TransferConfig setHost(String host) {
         this.host = host;
+        return this;
     }
 
     public int getPort() {
         return port;
     }
 
-    public void setPort(int port) {
+    public TransferConfig setPort(int port) {
         this.port = port;
+        return this;
     }
 
     public AuthUser getAuthUser() {
         return authUser;
     }
 
-    public void setAuthUser(AuthUser authUser) {
+    public TransferConfig setAuthUser(AuthUser authUser) {
         this.authUser = authUser;
+        return this;
     }
 }
