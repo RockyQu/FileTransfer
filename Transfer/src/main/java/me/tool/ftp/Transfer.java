@@ -1,25 +1,28 @@
 package me.tool.ftp;
 
-public class Transfer {
+import me.tool.ftp.internal.TransferWrapper;
 
-    private TransferConfig config = null;
+public class Transfer implements TransferWrapper {
 
     private Transfer() {
 
     }
 
     private static class Singleton {
-        private static Transfer transfer = new Transfer();
+        private static TransferWrapper transfer = new Transfer();
     }
 
-    public static Transfer get() {
+    public static TransferWrapper get() {
         return Singleton.transfer;
     }
 
-    public void init(TransferConfig config) {
-        this.config = config;
+    @Override
+    public boolean uploadFile(String filePath, String ftpPath) {
+        return false;
     }
 
-
-
+    @Override
+    public boolean downloadFile(String downPath, String savePath) {
+        return false;
+    }
 }

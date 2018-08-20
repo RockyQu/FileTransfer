@@ -1,49 +1,79 @@
 package me.tool.ftp;
 
+import android.app.Application;
+
+import org.apache.commons.net.ftp.FTPClient;
+
+import me.tool.ftp.user.AuthUser;
+
 /**
- * 配置一些必要的参数
+ * 一些配置参数，具体请查看 {@link TransferConfig}
  */
 public class TransferConfig {
 
-    private String host;
-    private int port;
+    private Application application;
+    private static final int DEFAULT_CONFIG_PORT = 21;
 
-    private TransferConfig(Builder builder) {
-        this.host = builder.host;
-        this.port = builder.port;
+    /**
+     * IP 地址
+     */
+    private String host;
+
+    /**
+     * 端口，默认 {@link TransferConfig#DEFAULT_CONFIG_PORT}
+     */
+    private int port = TransferConfig.DEFAULT_CONFIG_PORT;
+
+    /**
+     * 授权登录用户，具体请看 {@link AuthUser}
+     */
+    private AuthUser authUser;
+
+    private TransferConfig() {
+
+    }
+
+    private static class Singleton {
+        private static TransferConfig config = new TransferConfig();
+    }
+
+    public static TransferConfig get() {
+        return Singleton.config;
+    }
+
+    public void init(Application application) {
+        this.application = application;
+    }
+
+    public Application getApplication() {
+        return application;
+    }
+
+    public void setApplication(Application application) {
+        this.application = application;
     }
 
     public String getHost() {
         return host;
     }
 
+    public void setHost(String host) {
+        this.host = host;
+    }
+
     public int getPort() {
         return port;
     }
 
-    public static Builder builder() {
-        return new Builder();
+    public void setPort(int port) {
+        this.port = port;
     }
 
-    public static class Builder {
+    public AuthUser getAuthUser() {
+        return authUser;
+    }
 
-        // IP 地址
-        private String host;
-        // 端口，默认 21
-        private int port = 21;
-
-        public Builder setHost(String host) {
-            this.host = host;
-            return this;
-        }
-
-        public Builder setPort(int port) {
-            this.port = port;
-            return this;
-        }
-
-        public TransferConfig build() {
-            return new TransferConfig(this);
-        }
+    public void setAuthUser(AuthUser authUser) {
+        this.authUser = authUser;
     }
 }
