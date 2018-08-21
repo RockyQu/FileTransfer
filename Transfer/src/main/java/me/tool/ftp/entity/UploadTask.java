@@ -1,22 +1,14 @@
 package me.tool.ftp.entity;
 
-import android.app.Fragment;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.util.Log;
 
-import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTPReply;
-
-import java.io.File;
 import java.io.IOException;
 
-import me.tool.ftp.ConnectListener;
-import me.tool.ftp.LoginListener;
-import me.tool.ftp.TransferConfig;
-import me.tool.ftp.UploadListener;
+import me.tool.ftp.listener.ConnectListener;
+import me.tool.ftp.listener.LoginListener;
+import me.tool.ftp.listener.UploadListener;
 import me.tool.ftp.internal.InternalWrapper;
-import me.tool.ftp.internal.TransferWrapper;
 
 /**
  * 上传文件任务

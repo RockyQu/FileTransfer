@@ -2,20 +2,16 @@ package me.tool.ftp.demo;
 
 import android.content.ContentResolver;
 import android.net.Uri;
-import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
-import java.io.File;
-
-import me.tool.ftp.ConnectListener;
-import me.tool.ftp.LoginListener;
+import me.tool.ftp.listener.ConnectListener;
+import me.tool.ftp.listener.LoginListener;
 import me.tool.ftp.Transfer;
 import me.tool.ftp.TransferConfig;
-import me.tool.ftp.UploadListener;
-import me.tool.ftp.entity.AuthUser;
+import me.tool.ftp.listener.UploadListener;
 
 public class MainActivity extends AppCompatActivity {
 

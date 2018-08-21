@@ -1,10 +1,10 @@
-package me.tool.ftp.internal;
+package me.tool.ftp.listener;
 
 import android.net.Uri;
 
-import me.tool.ftp.ConnectListener;
-import me.tool.ftp.LoginListener;
-import me.tool.ftp.UploadListener;
+import me.tool.ftp.listener.ConnectListener;
+import me.tool.ftp.listener.LoginListener;
+import me.tool.ftp.listener.UploadListener;
 
 public interface TransferWrapper {
 

@@ -5,8 +5,6 @@ import org.apache.commons.net.ftp.FTPClientConfig;
 import java.io.File;
 import java.io.IOException;
 
-import me.tool.ftp.UploadListener;
-
 public interface InternalWrapper {
 
     /**

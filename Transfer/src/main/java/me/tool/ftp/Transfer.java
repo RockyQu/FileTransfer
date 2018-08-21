@@ -2,28 +2,24 @@ package me.tool.ftp;
 
 import android.net.Uri;
 import android.text.TextUtils;
-import android.util.Log;
 
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPClientConfig;
-import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import me.tool.ftp.entity.UploadTask;
 import me.tool.ftp.internal.InternalWrapper;
-import me.tool.ftp.internal.TransferWrapper;
+import me.tool.ftp.listener.TransferWrapper;
 import me.tool.ftp.entity.AuthUser;
+import me.tool.ftp.listener.ConnectListener;
+import me.tool.ftp.listener.LoginListener;
+import me.tool.ftp.listener.UploadListener;
 
 /**
  * @see <a href="https://github.com/RockyQu/FileTransfer"></a>
