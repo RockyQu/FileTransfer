@@ -1,36 +1,38 @@
 package me.tool.ftp.demo;
 
-import android.content.ContentResolver;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import java.io.File;
+import java.io.FileOutputStream;
+
 import me.tool.ftp.entity.AuthUser;
-import me.tool.ftp.listener.LoginListener;
+import me.tool.ftp.LoginListener;
 import me.tool.ftp.Transfer;
 import me.tool.ftp.TransferConfig;
-import me.tool.ftp.listener.TransferWrapper;
-import me.tool.ftp.listener.UploadListener;
+import me.tool.ftp.UploadListener;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    private Uri uri;
+    private String path;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        uri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" +
-                getResources().getResourcePackageName(R.mipmap.ic_launcher) + "/" +
-                getResources().getResourceTypeName(R.mipmap.ic_launcher) + "/" +
-                getResources().getResourceEntryName(R.mipmap.ic_launcher));
-        Log.e(TAG, String.valueOf(uri.getPath()));
+        // 一个测试文件
+        path = this.saveBitmap(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher));
 
+        // 配置参数
         TransferConfig.getInstance()
                 .setApplication(getApplication())
                 // 设置IP 地址
@@ -39,12 +41,11 @@ public class MainActivity extends AppCompatActivity {
                 .setPort(21)
         ;
 
-
         findViewById(R.id.btn_test).setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                Transfer.getInstance().uploadFile(uri, new UploadListener() {
+                Transfer.getInstance().uploadFile(Uri.parse(path), new UploadListener() {
 
                     @Override
                     public void uploaded(boolean result) {
@@ -66,5 +67,28 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("loginState", String.valueOf(reply));
             }
         });
+    }
+
+    /**
+     * 保存 Bitmap
+     *
+     * @param bitmap
+     * @return
+     */
+    public String saveBitmap(Bitmap bitmap) {
+        File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "test.png");
+        if (file.exists()) {
+            file.delete();
+        }
+        try {
+            FileOutputStream out = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+            out.flush();
+            out.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return file.getPath();
     }
 }

@@ -1,10 +1,12 @@
-package me.tool.ftp.entity;
+package me.tool.ftp.task;
 
 import android.os.AsyncTask;
 import java.io.IOException;
 
+import me.tool.ftp.entity.AuthUser;
+import me.tool.ftp.entity.ReplyCode;
 import me.tool.ftp.internal.InternalWrapper;
-import me.tool.ftp.listener.LoginListener;
+import me.tool.ftp.LoginListener;
 
 /**
  * 连接并登录
@@ -29,7 +31,7 @@ public class LoginTask extends AsyncTask<Void, Void, Void> {
                 loginListener.connectState(connectReply);
             }
 
-            if (connectReply == LoginListener.CONNECT_STATE_SUCCESS) {
+            if (connectReply == ReplyCode.SERVICE_READY) {
                 int loginReply = wrapper.login(authUser);// 开始登录
                 if (loginListener != null) {
                     loginListener.loginState(loginReply);

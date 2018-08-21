@@ -1,12 +1,13 @@
-package me.tool.ftp.entity;
+package me.tool.ftp.task;
 
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.util.Log;
 
+import java.io.File;
 import java.io.IOException;
 
-import me.tool.ftp.listener.LoginListener;
-import me.tool.ftp.listener.UploadListener;
+import me.tool.ftp.UploadListener;
 import me.tool.ftp.internal.InternalWrapper;
 
 /**
@@ -36,6 +37,13 @@ public class UploadTask extends AsyncTask<String, Integer, Boolean> {
     protected Boolean doInBackground(String... strings) {
         boolean result = false;
 
+        try {
+            if (uri != null) {
+                result = wrapper.uploadInputStream(new File(uri.getPath()));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         return result;
     }

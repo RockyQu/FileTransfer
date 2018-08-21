@@ -1,29 +1,27 @@
-package me.tool.ftp.listener;
+package me.tool.ftp;
+
+import me.tool.ftp.entity.ReplyCode;
 
 /**
  * 登录状态监听接口
  */
 public interface LoginListener {
 
-    int CONNECT_STATE_FAILURE = 0;
-    int CONNECT_STATE_SUCCESS = 220;
-
     /**
      * 连接状态
      * <p>
-     * {@link LoginListener#CONNECT_STATE_FAILURE}
-     * {@link LoginListener#CONNECT_STATE_SUCCESS}
+     * {@link ReplyCode#CONNECT_STATE_FAILURE}
+     * {@link ReplyCode#CONNECT_STATE_SUCCESS}
      *
      * @param reply 状态码
      */
     void connectState(int reply);
 
-    int LOGIN_STATE_SUCCESS = 220;
 
     /**
      * 登录状态
      * <p>
-     * {@link LoginListener#LOGIN_STATE_SUCCESS}
+     * {@link ReplyCode#LOGIN_STATE_SUCCESS}
      *
      * @param reply 状态码
      */

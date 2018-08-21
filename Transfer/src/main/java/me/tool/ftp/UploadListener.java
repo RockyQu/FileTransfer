@@ -1,4 +1,4 @@
-package me.tool.ftp.listener;
+package me.tool.ftp;
 
 /**
  * 上传文件状态监听接口

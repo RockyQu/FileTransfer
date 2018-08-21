@@ -3,6 +3,7 @@ package me.tool.ftp;
 import android.app.Application;
 
 import me.tool.ftp.entity.AuthUser;
+import me.tool.ftp.log.TransferLog;
 
 /**
  * 一些配置参数，具体请查看 {@link TransferConfig}
@@ -26,6 +27,11 @@ public class TransferConfig {
      * 授权登录用户，具体请看 {@link AuthUser}
      */
     private AuthUser authUser;
+
+    /**
+     * 日志
+     */
+    private boolean debug = false;
 
     private TransferConfig() {
 
@@ -76,6 +82,16 @@ public class TransferConfig {
 
     public TransferConfig setAuthUser(AuthUser authUser) {
         this.authUser = authUser;
+        return this;
+    }
+
+    public boolean isDebug() {
+        return debug;
+    }
+
+    public TransferConfig setDebug(boolean debug) {
+        TransferLog.setDebug(debug);
+        this.debug = debug;
         return this;
     }
 }
