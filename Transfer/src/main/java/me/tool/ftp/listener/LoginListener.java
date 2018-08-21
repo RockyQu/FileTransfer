@@ -5,6 +5,19 @@ package me.tool.ftp.listener;
  */
 public interface LoginListener {
 
+    int CONNECT_STATE_FAILURE = 0;
+    int CONNECT_STATE_SUCCESS = 220;
+
+    /**
+     * 连接状态
+     * <p>
+     * {@link LoginListener#CONNECT_STATE_FAILURE}
+     * {@link LoginListener#CONNECT_STATE_SUCCESS}
+     *
+     * @param reply 状态码
+     */
+    void connectState(int reply);
+
     int LOGIN_STATE_SUCCESS = 220;
 
     /**

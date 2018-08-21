@@ -7,10 +7,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
-import me.tool.ftp.listener.ConnectListener;
+import me.tool.ftp.entity.AuthUser;
 import me.tool.ftp.listener.LoginListener;
 import me.tool.ftp.Transfer;
 import me.tool.ftp.TransferConfig;
+import me.tool.ftp.listener.TransferWrapper;
 import me.tool.ftp.listener.UploadListener;
 
 public class MainActivity extends AppCompatActivity {
@@ -43,26 +44,26 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                Transfer.getInstance().uploadFile(uri,
-                        new ConnectListener() {
+                Transfer.getInstance().uploadFile(uri, new UploadListener() {
 
-                            @Override
-                            public void connectState(int reply) {
-                                Log.e("connectState", String.valueOf(reply));
-                            }
-                        }, new LoginListener() {
+                    @Override
+                    public void uploaded(boolean result) {
+                        Log.e("uploaded", result ? "Success" : "Failure");
+                    }
+                });
+            }
+        });
 
-                            @Override
-                            public void loginState(int reply) {
-                                Log.e("loginState", String.valueOf(reply));
-                            }
-                        }, new UploadListener() {
+        // 连接并登录，必须在上传文件之前完成
+        Transfer.getInstance().login(new AuthUser("", ""), new LoginListener() {
+            @Override
+            public void connectState(int reply) {
+                Log.e("connectState", String.valueOf(reply));
+            }
 
-                            @Override
-                            public void uploaded(boolean result) {
-                                Log.e("uploaded", result ? "Success" : "Failure");
-                            }
-                        });
+            @Override
+            public void loginState(int reply) {
+                Log.e("loginState", String.valueOf(reply));
             }
         });
     }

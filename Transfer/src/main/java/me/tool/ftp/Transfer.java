@@ -1,6 +1,7 @@
 package me.tool.ftp;
 
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.text.TextUtils;
 
 import org.apache.commons.net.ftp.FTP;
@@ -13,11 +14,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import me.tool.ftp.entity.LoginTask;
 import me.tool.ftp.entity.UploadTask;
 import me.tool.ftp.internal.InternalWrapper;
 import me.tool.ftp.listener.TransferWrapper;
 import me.tool.ftp.entity.AuthUser;
-import me.tool.ftp.listener.ConnectListener;
 import me.tool.ftp.listener.LoginListener;
 import me.tool.ftp.listener.UploadListener;
 
@@ -47,6 +48,18 @@ public class Transfer implements TransferWrapper, InternalWrapper {
     }
 
     /**
+     * 对外开放登录接口 {@link TransferWrapper#login(AuthUser, LoginListener)} }
+     *
+     * @param authUser
+     * @param loginListener
+     * @return
+     */
+    @Override
+    public AsyncTask login(AuthUser authUser, LoginListener loginListener) {
+        return new LoginTask(authUser, this, loginListener).execute();
+    }
+
+    /**
      * 对外开放上传文件接口 {@link TransferWrapper#uploadFile(Uri, UploadListener)}
      *
      * @param uri            需要上传的文件路径
@@ -54,26 +67,8 @@ public class Transfer implements TransferWrapper, InternalWrapper {
      * @return
      */
     @Override
-    public void uploadFile(Uri uri, UploadListener uploadListener) {
-        this.uploadFile(uri, null, uploadListener);
-    }
-
-    @Override
-    public void uploadFile(Uri uri, ConnectListener connectListener, UploadListener uploadListener) {
-        this.uploadFile(uri, null, null, uploadListener);
-    }
-
-    @Override
-    public void uploadFile(Uri uri, ConnectListener connectListener, LoginListener loginListener, UploadListener uploadListener) {
-
-        UploadTask task = new UploadTask(uri, this, connectListener, loginListener, uploadListener);
-        task.execute();
-
-
-//            File file = new File(path);
-//            if (file.exists() && file.isFile()) {
-//                boolean uploadResult = uploadInputStream(file);
-//            }
+    public AsyncTask uploadFile(Uri uri, UploadListener uploadListener) {
+        return new UploadTask(uri, this, uploadListener).execute();
     }
 
     @Override
@@ -103,8 +98,8 @@ public class Transfer implements TransferWrapper, InternalWrapper {
     }
 
     @Override
-    public int login() throws IOException {
-        AuthUser user = TransferConfig.getInstance().getAuthUser();
+    public int login(AuthUser authUser) throws IOException {
+        AuthUser user = authUser != null ? authUser : TransferConfig.getInstance().getAuthUser();
         if (user != null) {
             client.login(!TextUtils.isEmpty(user.getUsername()) ? user.getUsername() : "anonymous", user.getPassword());
         }
@@ -114,10 +109,8 @@ public class Transfer implements TransferWrapper, InternalWrapper {
             client.disconnect();
         }
 
-        client.configure(getClientConfig("zh"));
         // 设置文本类型，必须在 Login 以后
         client.setFileType(FTP.BINARY_FILE_TYPE);
-
         return reply;
     }
 
@@ -142,13 +135,6 @@ public class Transfer implements TransferWrapper, InternalWrapper {
         }
 
         return uploadResult;
-    }
-
-    @Override
-    public FTPClientConfig getClientConfig(String code) {
-        FTPClientConfig config = new FTPClientConfig(FTPClientConfig.SYST_UNIX);
-        config.setServerLanguageCode(code);
-        return config;
     }
 
     @Override
