@@ -1,5 +1,10 @@
 package me.tool.ftp;
 
+import android.net.Uri;
+import android.text.TextUtils;
+import android.util.Log;
+
+import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPFile;
@@ -15,18 +20,26 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import me.tool.ftp.entity.UploadTask;
+import me.tool.ftp.internal.InternalWrapper;
 import me.tool.ftp.internal.TransferWrapper;
 import me.tool.ftp.entity.AuthUser;
 
-public class Transfer implements TransferWrapper {
+/**
+ * @see <a href="https://github.com/RockyQu/FileTransfer"></a>
+ */
+public class Transfer implements TransferWrapper, InternalWrapper {
 
-    /**
-     * {@link FTPClient}
-     */
+    private static final int DEFAULT_TIMEOUT_SECOND = 10;
+
     private FTPClient client = new FTPClient();
 
     private Transfer() {
-        this.initDefaults();
+        client.setDefaultTimeout(DEFAULT_TIMEOUT_SECOND * 1000);
+        client.setConnectTimeout(DEFAULT_TIMEOUT_SECOND * 1000);
+        client.setDataTimeout(DEFAULT_TIMEOUT_SECOND * 1000);
+        client.setControlKeepAliveReplyTimeout(DEFAULT_TIMEOUT_SECOND * 1000);
+        client.setControlKeepAliveTimeout(DEFAULT_TIMEOUT_SECOND * 1000);
     }
 
     private static class Singleton {
@@ -37,62 +50,55 @@ public class Transfer implements TransferWrapper {
         return Singleton.transfer;
     }
 
-    private void initDefaults() {
-        client.setDefaultPort(TransferConfig.getInstance().getPort());
-    }
-
     /**
-     * FTP当前目录.
+     * 对外开放上传文件接口 {@link TransferWrapper#uploadFile(Uri, UploadListener)}
+     *
+     * @param uri            需要上传的文件路径
+     * @param uploadListener 文件上传状态监听
+     * @return
      */
-    private String currentPath = "/";
-
     @Override
-    public boolean uploadFile(String path, UploadListener uploadListener) {
-        boolean flag = false;
-
-        return flag;
+    public void uploadFile(Uri uri, UploadListener uploadListener) {
+        this.uploadFile(uri, null, uploadListener);
     }
 
     @Override
-    public void connect() throws IOException {
-// 中文转码
+    public void uploadFile(Uri uri, ConnectListener connectListener, UploadListener uploadListener) {
+        this.uploadFile(uri, null, null, uploadListener);
+    }
+
+    @Override
+    public void uploadFile(Uri uri, ConnectListener connectListener, LoginListener loginListener, UploadListener uploadListener) {
+
+        UploadTask task = new UploadTask(uri, this, connectListener, loginListener, uploadListener);
+        task.execute();
+
+
+//            File file = new File(path);
+//            if (file.exists() && file.isFile()) {
+//                boolean uploadResult = uploadInputStream(file);
+//            }
+    }
+
+    @Override
+    public int connect() throws IOException {
+
+        // 编码
+        client.setAutodetectUTF8(true);
         client.setControlEncoding("UTF-8");
-        int reply; // 服务器响应值
-        // 连接至服务器
-        client.connect(TransferConfig.getInstance().getHost());
+
+        // 连接服务器
+        client.connect(TransferConfig.getInstance().getHost(), TransferConfig.getInstance().getPort());
+
         // 获取响应值
-        reply = client.getReplyCode();
+        int reply = client.getReplyCode();
         if (!FTPReply.isPositiveCompletion(reply)) {
             // 断开连接
             client.disconnect();
-            throw new IOException("connect fail: " + reply);
+            return reply;
         }
-        // 登录到服务器
-        AuthUser user = TransferConfig.getInstance().getAuthUser();
-        if (user != null && !user.getUsername().equals("")) {
-            client.login(user.getUsername(), user.getPassword());
-        } else {
-            //无用户名登录时
-            client.login("anonymous", "123456");
-        }
-        // 获取响应值，判断登陆结果
-        reply = client.getReplyCode();
-        if (!FTPReply.isPositiveCompletion(reply)) {
-            // 断开连接
-            client.disconnect();
-            throw new IOException("connect fail: " + reply);
-        } else {
-            // 获取登录信息
-            FTPClientConfig config = new FTPClientConfig(client.getSystemType().split(" ")[0]);
-            config.setServerLanguageCode("zh");
-            client.configure(config);
-            // 使用被动模式设为默认
-//            ftpClient.enterLocalPassiveMode();
-//            ftpClient.enterLocalActiveMode();
-//            ftpClient.enterRemotePassiveMode();
-//            // 二进制文件支持
-            client.setFileType(FTPClient.BINARY_FILE_TYPE);
-        }
+
+        return reply;
     }
 
     @Override
@@ -101,8 +107,52 @@ public class Transfer implements TransferWrapper {
     }
 
     @Override
+    public int login() throws IOException {
+        AuthUser user = TransferConfig.getInstance().getAuthUser();
+        if (user != null) {
+            client.login(!TextUtils.isEmpty(user.getUsername()) ? user.getUsername() : "anonymous", user.getPassword());
+        }
+
+        int reply = client.getReplyCode();
+        if (!FTPReply.isPositiveCompletion(reply)) {// 是否是非法状态码
+            client.disconnect();
+        }
+
+        client.configure(getClientConfig("zh"));
+        // 设置文本类型，必须在 Login 以后
+        client.setFileType(FTP.BINARY_FILE_TYPE);
+
+        return reply;
+    }
+
+    @Override
     public boolean createFolder(String path) throws IOException {
         return client.makeDirectory(path);
+    }
+
+    @Override
+    public boolean uploadInputStream(File file) throws IOException {
+        boolean uploadResult = false;
+
+        // 设置模式
+        client.setFileTransferMode(FTP.STREAM_TRANSFER_MODE);
+        // 改变FTP目录
+        client.changeWorkingDirectory("/");
+
+        if (file.exists() && file.isFile()) {
+            InputStream inputStream = new FileInputStream(file);
+            uploadResult = client.storeFile(file.getName(), inputStream);
+            inputStream.close();
+        }
+
+        return uploadResult;
+    }
+
+    @Override
+    public FTPClientConfig getClientConfig(String code) {
+        FTPClientConfig config = new FTPClientConfig(FTPClientConfig.SYST_UNIX);
+        config.setServerLanguageCode(code);
+        return config;
     }
 
     @Override
@@ -111,68 +161,5 @@ public class Transfer implements TransferWrapper {
             client.logout();
             client.disconnect();
         }
-    }
-
-    /**
-     * 上传.
-     *
-     * @param localFolderPath 需要上传的本地文件夹路径
-     * @param remotePath      FTP目录
-     * @return 上传结果
-     * @throws IOException
-     */
-    public int uploadFolder(String localFolderPath, String remotePath) throws IOException {
-        //
-        int count = 0;
-        boolean flag = false;
-        // 初始化FTP当前目录
-        currentPath = remotePath;
-        // 二进制文件支持
-        client.setFileType(FTPClient.BINARY_FILE_TYPE);
-        // 设置模式
-        client.setFileTransferMode(FTPClient.STREAM_TRANSFER_MODE);
-        // 改变FTP目录
-        client.changeWorkingDirectory(currentPath);
-        File localFolder = new File(localFolderPath);
-        if (localFolder.exists() && localFolder.isDirectory()) {
-            //先在ftp上创建对应的文件夹
-            String ftpFolder = remotePath + "/" + localFolder.getName();
-            createFolder(ftpFolder);
-            // 改变FTP目录
-            client.changeWorkingDirectory(ftpFolder);
-            //遍历文件夹
-            File[] files = localFolder.listFiles();
-            for (File file : files) {
-                if (file.isDirectory()) {
-                    //如果是文件夹
-                    int result = uploadFolder(file.getAbsolutePath(), ftpFolder + "/" + file.getName());
-                    count += result;
-                } else if (file.isFile()) {
-                    flag = uploadingSingle(file);
-                    if (flag) {
-                        count++;
-                    }
-                }
-            }
-        }
-        return count;
-    }
-
-    /**
-     * 上传单个文件.
-     *
-     * @param localFile 本地文件
-     * @return true上传成功, false上传失败
-     * @throws IOException
-     */
-    private boolean uploadingSingle(File localFile) throws IOException {
-        boolean flag;
-        // 创建输入流
-        InputStream inputStream = new FileInputStream(localFile);
-        // 上传单个文件
-        flag = client.storeFile(localFile.getName(), inputStream);
-        // 关闭文件流
-        inputStream.close();
-        return flag;
     }
 }

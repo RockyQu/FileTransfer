@@ -18,11 +18,11 @@ publish {
 
 android {
 
-    compileSdkVersion 28
+    compileSdkVersion 27
 
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 28
+        targetSdkVersion 27
         versionCode verCode
         versionName verName
     }

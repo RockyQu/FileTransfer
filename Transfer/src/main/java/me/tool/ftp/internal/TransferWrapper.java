@@ -1,44 +1,40 @@
 package me.tool.ftp.internal;
 
-import java.io.IOException;
+import android.net.Uri;
 
+import me.tool.ftp.ConnectListener;
+import me.tool.ftp.LoginListener;
 import me.tool.ftp.UploadListener;
 
 public interface TransferWrapper {
 
     /**
-     * 连接服务器
+     * 上传文件
      *
-     * @throws IOException
+     * @param uri           需要上传的文件路径
+     * @param uploadListener 文件上传状态监听
+     * @return
      */
-    void connect() throws IOException;
-
-    /**
-     * 是否已经连接服务器
-     */
-    boolean isConnected();
+    void uploadFile(Uri uri, UploadListener uploadListener);
 
     /**
      * 上传文件
      *
-     * @param path           需要上传的文件路径
-     * @param uploadListener 文件上传状态监听
+     * @param uri            需要上传的文件路径
+     * @param connectListener 连接状态监听接口
+     * @param uploadListener  文件上传状态监听
      * @return
      */
-    boolean uploadFile(String path, UploadListener uploadListener);
+    void uploadFile(Uri uri, ConnectListener connectListener, UploadListener uploadListener);
 
     /**
-     * 在服务器上创建文件夹
+     * 上传文件
      *
-     * @param path
+     * @param uri            需要上传的文件路径
+     * @param connectListener 连接状态监听接口
+     * @param loginListener   登录状态监听接口
+     * @param uploadListener  文件上传状态监听
      * @return
      */
-    boolean createFolder(String path) throws IOException;
-
-    /**
-     * 关闭连接
-     *
-     * @throws IOException
-     */
-    void close() throws IOException;
+    void uploadFile(Uri uri, ConnectListener connectListener, LoginListener loginListener, UploadListener uploadListener);
 }

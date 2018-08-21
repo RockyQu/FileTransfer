@@ -1,12 +1,21 @@
 package me.tool.ftp.entity;
 
 import android.app.Fragment;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.util.Log;
+
+import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPReply;
 
 import java.io.File;
 import java.io.IOException;
 
+import me.tool.ftp.ConnectListener;
+import me.tool.ftp.LoginListener;
+import me.tool.ftp.TransferConfig;
 import me.tool.ftp.UploadListener;
+import me.tool.ftp.internal.InternalWrapper;
 import me.tool.ftp.internal.TransferWrapper;
 
 /**
@@ -14,24 +23,19 @@ import me.tool.ftp.internal.TransferWrapper;
  */
 public class UploadTask extends AsyncTask<String, Integer, Boolean> {
 
-    // 上传文件本地路径
-    private String path;
+    private Uri uri;
 
-    /**
-     * {@link TransferWrapper}
-     */
-    private TransferWrapper wrapper;
+    private InternalWrapper wrapper;
 
-    /**
-     * 上传文件状态监听接口
-     * <p>
-     * {@link TransferWrapper}
-     */
+    private ConnectListener connectListener;
+    private LoginListener loginListener;
     private UploadListener uploadListener;
 
-    public UploadTask(String path, TransferWrapper wrapper, UploadListener uploadListener) {
-        this.path = path;
+    public UploadTask(Uri uri, InternalWrapper wrapper, ConnectListener connectListener, LoginListener loginListener, UploadListener uploadListener) {
+        this.uri = uri;
         this.wrapper = wrapper;
+        this.connectListener = connectListener;
+        this.loginListener = loginListener;
         this.uploadListener = uploadListener;
     }
 
@@ -47,7 +51,27 @@ public class UploadTask extends AsyncTask<String, Integer, Boolean> {
     protected Boolean doInBackground(String... strings) {
         boolean result = false;
 
-        result = wrapper.uploadFile(path, uploadListener);
+        try {
+            // 开始连接服务器
+            int connectReply = wrapper.connect();
+            if (connectListener != null) {
+                connectListener.connectState(connectReply);
+            }
+
+            if (connectReply == ConnectListener.CONNECT_STATE_SUCCESS) {
+                int loginReply = wrapper.login();
+                if (loginListener != null) {
+                    loginListener.loginState(loginReply);
+                }
+
+                if (loginReply == LoginListener.LOGIN_STATE_SUCCESS) {
+
+                }
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         return result;
     }
