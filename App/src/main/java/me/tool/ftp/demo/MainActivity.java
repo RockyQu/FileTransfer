@@ -39,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
                 .setHost("192.168.1.22")
                 // 端口
                 .setPort(21)
+                // 日志
+                .setDebug(true)
         ;
 
         findViewById(R.id.btn_test).setOnClickListener(new View.OnClickListener() {

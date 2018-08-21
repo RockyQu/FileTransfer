@@ -13,6 +13,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import me.tool.ftp.log.TransferLog;
 import me.tool.ftp.task.LoginTask;
 import me.tool.ftp.task.UploadTask;
 import me.tool.ftp.internal.InternalWrapper;
@@ -118,6 +119,11 @@ public class Transfer implements TransferWrapper, InternalWrapper {
     @Override
     public boolean uploadInputStream(File file) throws IOException {
         boolean uploadResult = false;
+
+        TransferLog.d(isConnected() + "");
+        if (isConnected()) {
+
+        }
 
         // 设置模式
         client.setFileTransferMode(FTP.STREAM_TRANSFER_MODE);
