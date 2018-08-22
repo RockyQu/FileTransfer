@@ -1,4 +1,4 @@
-# Logg
+# FileTransfer
 这是一个基于 Apache FTPClient 的轻量封装，帮助你轻松实现上传任何类型的文件
 
 ## Download
