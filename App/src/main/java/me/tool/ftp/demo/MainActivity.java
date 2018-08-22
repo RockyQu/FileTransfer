@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void uploaded(boolean result) {
-                        Log.e("uploaded", result ? "Success" : "Failure");
+                        Log.e(TAG, result ? "Success" : "Failure");
                     }
                 });
             }
@@ -62,12 +62,12 @@ public class MainActivity extends AppCompatActivity {
         Transfer.getInstance().login(new AuthUser("", ""), new LoginListener() {
             @Override
             public void connectState(int reply) {
-                TransferLog.d(String.valueOf(reply));
+//                TransferLog.d(String.valueOf(reply));
             }
 
             @Override
             public void loginState(int reply) {
-                TransferLog.d(String.valueOf(reply));
+//                TransferLog.d(String.valueOf(reply));
             }
         });
     }
