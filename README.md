@@ -4,7 +4,7 @@
 ## Download
 Gradle:
 ```
-api 'me.tool:FileTransfer:0.1.0'
+api 'me.tool:FileTransfer:0.1.2'
 ```
 
 ## History
