@@ -8,6 +8,13 @@ import me.tool.ftp.entity.AuthUser;
 public interface InternalWrapper {
 
     /**
+     * 获取连接状态
+     *
+     * @return
+     */
+    int getReplyCode();
+
+    /**
      * 连接服务器
      *
      * @throws IOException

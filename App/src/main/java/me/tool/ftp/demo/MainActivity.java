@@ -17,6 +17,7 @@ import me.tool.ftp.LoginListener;
 import me.tool.ftp.Transfer;
 import me.tool.ftp.TransferConfig;
 import me.tool.ftp.UploadListener;
+import me.tool.ftp.log.TransferLog;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -61,12 +62,12 @@ public class MainActivity extends AppCompatActivity {
         Transfer.getInstance().login(new AuthUser("", ""), new LoginListener() {
             @Override
             public void connectState(int reply) {
-                Log.e("connectState", String.valueOf(reply));
+                TransferLog.d(String.valueOf(reply));
             }
 
             @Override
             public void loginState(int reply) {
-                Log.e("loginState", String.valueOf(reply));
+                TransferLog.d(String.valueOf(reply));
             }
         });
     }

@@ -3,6 +3,7 @@ package me.tool.ftp;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.text.TextUtils;
+import android.util.Log;
 
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
@@ -13,6 +14,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import me.tool.ftp.entity.ReplyCode;
 import me.tool.ftp.log.TransferLog;
 import me.tool.ftp.task.LoginTask;
 import me.tool.ftp.task.UploadTask;
@@ -44,6 +46,11 @@ public class Transfer implements TransferWrapper, InternalWrapper {
         return Singleton.transfer;
     }
 
+    @Override
+    public AsyncTask login(LoginListener loginListener) {
+        return this.login(TransferConfig.getInstance().getAuthUser(), loginListener);
+    }
+
     /**
      * 对外开放登录接口 {@link TransferWrapper#login(AuthUser, LoginListener)} }
      *
@@ -66,6 +73,11 @@ public class Transfer implements TransferWrapper, InternalWrapper {
     @Override
     public AsyncTask uploadFile(Uri uri, UploadListener uploadListener) {
         return new UploadTask(uri, this, uploadListener).execute();
+    }
+
+    @Override
+    public int getReplyCode() {
+        return client.getReplyCode();
     }
 
     @Override
@@ -96,7 +108,7 @@ public class Transfer implements TransferWrapper, InternalWrapper {
 
     @Override
     public int login(AuthUser authUser) throws IOException {
-        AuthUser user = authUser != null ? authUser : TransferConfig.getInstance().getAuthUser();
+        AuthUser user = TransferConfig.getInstance().setAuthUser(authUser).getAuthUser();
         if (user != null) {
             client.login(!TextUtils.isEmpty(user.getUsername()) ? user.getUsername() : "anonymous", user.getPassword());
         }
@@ -119,11 +131,6 @@ public class Transfer implements TransferWrapper, InternalWrapper {
     @Override
     public boolean uploadInputStream(File file) throws IOException {
         boolean uploadResult = false;
-
-        TransferLog.d(isConnected() + "");
-        if (isConnected()) {
-
-        }
 
         // 设置模式
         client.setFileTransferMode(FTP.STREAM_TRANSFER_MODE);

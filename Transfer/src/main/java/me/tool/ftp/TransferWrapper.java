@@ -12,6 +12,13 @@ public interface TransferWrapper {
      *
      * @return
      */
+    AsyncTask login(LoginListener loginListener);
+
+    /**
+     * 连接并登录
+     *
+     * @return
+     */
     AsyncTask login(AuthUser authUser, LoginListener loginListener);
 
     /**
