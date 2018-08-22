@@ -26,7 +26,7 @@ dependencies {
     implementation 'com.android.support:appcompat-v7:27.0.0'
 
     // FTP
-    api 'me.tool:FileTransfer:0.1.0'
-//    api project(':Transfer')
+//    api 'me.tool:FileTransfer:0.1.0'
+    api project(':Transfer')
 
 }
