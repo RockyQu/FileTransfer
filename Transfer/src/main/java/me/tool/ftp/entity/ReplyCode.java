@@ -9,6 +9,8 @@ public class ReplyCode {
     public static final int COMMAND_DETERMINE = 200;
     // 服务就绪，可以执行新用户的请求
     public static final int SERVICE_READY = 220;
+    // 服务关闭控制连接
+    public static final int SERVICE_CLOSE_CONNECTION = 221;
     // 连接已关闭
     public static final int CONNECTION_CLOSED = 226;
     // 用户已登录

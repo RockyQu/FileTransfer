@@ -29,10 +29,6 @@ public class LoginTask extends AsyncTask<Void, Void, Void> {
     @Override
     protected Void doInBackground(Void... voids) {
         try {
-            TransferLog.d(String.format(Locale.ENGLISH,
-                    "Info: Connect %b ReplyCode %d",
-                    wrapper.isConnected(), wrapper.getReplyCode()));
-
             int connectReply = wrapper.connect();// 开始连接服务器
             if (loginListener != null) {
                 loginListener.connectState(connectReply);
@@ -44,6 +40,9 @@ public class LoginTask extends AsyncTask<Void, Void, Void> {
                     loginListener.loginState(loginReply);
                 }
             }
+
+            TransferLog.d(String.format(Locale.ENGLISH, "Info: Connect %b ReplyCode %d",
+                    wrapper.isConnected(), wrapper.getReplyCode()));
 
         } catch (IOException e) {
             e.printStackTrace();

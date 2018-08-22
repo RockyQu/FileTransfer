@@ -26,7 +26,7 @@ import me.tool.ftp.entity.AuthUser;
  */
 public class Transfer implements TransferWrapper, InternalWrapper {
 
-    private static final int DEFAULT_TIMEOUT_SECOND = 10;
+    private static final int DEFAULT_TIMEOUT_SECOND = 3;
 
     private FTPClient client = new FTPClient();
 
@@ -142,6 +142,8 @@ public class Transfer implements TransferWrapper, InternalWrapper {
             uploadResult = client.storeFile(file.getName(), inputStream);
             inputStream.close();
         }
+
+        this.close();
 
         return uploadResult;
     }

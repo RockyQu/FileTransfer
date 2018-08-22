@@ -42,18 +42,22 @@ public class UploadTask extends AsyncTask<String, Integer, Boolean> {
         boolean result = false;
 
         try {
+            TransferLog.d(String.format(Locale.ENGLISH, "Info: Connect %b ReplyCode %d",
+                    wrapper.isConnected(), wrapper.getReplyCode()));
+
             // 如果连接失效或登录超时，则重新连接登录
             if (!wrapper.isConnected() || !(wrapper.getReplyCode() == ReplyCode.COMMAND_DETERMINE | wrapper.getReplyCode() == ReplyCode.SERVICE_READY)) {
 
-                TransferLog.d(String.format(Locale.ENGLISH,
-                        "Info: Connect %b ReplyCode %d , This connection is closed or logout timeout, attempting to reconnect to login.",
-                        wrapper.isConnected(), wrapper.getReplyCode()));
+                TransferLog.d("This connection is closed or logout timeout, attempting to reconnect to login.");
 
                 int connectReply = wrapper.connect();// 开始连接服务器
                 if (connectReply == ReplyCode.SERVICE_READY) {
                     wrapper.login(TransferConfig.getInstance().getAuthUser());
                 }
             }
+
+            TransferLog.d(String.format(Locale.ENGLISH, "Info: Connect %b ReplyCode %d",
+                    wrapper.isConnected(), wrapper.getReplyCode()));
 
             if (uri != null) {
                 result = wrapper.uploadInputStream(new File(uri.getPath()));
